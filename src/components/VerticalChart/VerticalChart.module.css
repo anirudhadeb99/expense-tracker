@@ -1,0 +1,15 @@
+.container{
+    width: 580px;
+    height: 290px;
+    border-radius: 15px;
+    background-color: white;
+    padding: 25px 20px;
+}
+    
+.italic{
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 28px;
+    color: white;
+}
