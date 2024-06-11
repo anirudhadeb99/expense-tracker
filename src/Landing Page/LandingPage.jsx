@@ -3,74 +3,47 @@ import ExpenseTracker from "../components/ExpenseTracker/ExpenseTracker";
 import Table from "../components/Table/Table";
 import styles from "./LandingPage.module.css";
 import { useEffect, useState } from "react";
-const LandingPage = () => {
-  const data = [
-    {
-      name: "Samosa",
-      date: "20/12/2024",
-      price: 150,
-      category: "food",
-    },
 
-    {
-      name: "Movie",
-      date: "20/12/2024",
-      price: 300,
-      category: "entertainment",
-    },
+export const calculateData = (data) => {
+  let food = 0,
+    entertainment = 0,
+    travel = 0;
 
-    {
-      name: "Auto",
-      date: "20/12/2024",
-      price: 50,
-      category: "travel",
-    },
-    {
-      name: "Pizza",
-      date: "20/12/2024",
-      price: 400,
-      category: "food",
-    },
-
-    {
-      name: "Cricket",
-      date: "20/12/2024",
-      price: 300,
-      category: "entertainment",
-    },
-
-    {
-      name: "Plane",
-      date: "20/12/2024",
-      price: 1000,
-      category: "travel",
-    },
+  data.map((item) => {
+    if (item.category === "food") food += parseInt(item.price);
+    else if (item.category === "entertainment") entertainment += parseInt(item.price);
+    else if (item.category === "travel") travel += parseInt(item.price);
+  });
+  return [
+    { name: "Travel", value: travel },
+    { name: "Entertainment", value: entertainment },
+    { name: "Food", value: food },
   ];
+};
 
-  const calculateData = () => {
-    let food = 0,
-      entertainment = 0,
-      travel = 0;
+const LandingPage = () => {
+  const [data,setData] = useState([])
+  const [chartData,setChartData] = useState([]);
 
-    data.map((item) => {
-      if (item.category === "food") food += item.price;
-      else if (item.category === "entertainment") entertainment += item.price;
-      else if (item.category === "travel") travel += item.price;
-    });
-    return [
-      { name: "Travel", value: travel },
-      { name: "Entertainment", value: entertainment },
-      { name: "Food", value: food },
-    ];
-  };
+
+  useEffect(()=> {
+    if(localStorage.getItem("data")!==null)
+      {
+        const parsedData = JSON.parse(localStorage.getItem("data"));
+        setData(parsedData);}
+    if(data.length>0)
+  {  const chart = calculateData(data);
+    setChartData(chart);
+  }
+  },[data])
 
   return (
     <div>
     <div className={styles.container}>
-      <ExpenseTracker chartData={calculateData()} />
+      <ExpenseTracker data={data} setData={setData} chartData={chartData} setChartData={setChartData} />
       <div className={styles.wrapper}>
       <Table data={data} />
-        <VerticalChart data={calculateData()}/>
+        <VerticalChart data={chartData}/>
       </div>
     </div>
     </div>

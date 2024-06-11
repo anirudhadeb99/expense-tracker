@@ -15,8 +15,6 @@ const TableFooter = ({page,setPage,range,slice})=>{
             setPage(page-1);
     }
     const handleNextPage = ()=>{
-        console.log(slice);
-
         if(page<range.length)
             setPage(page+1);
     }

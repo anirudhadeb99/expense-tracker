@@ -1,22 +1,74 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Chart from "../Chart/Chart";
 import styles from "./ExpenseTracker.module.css";
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
+import {calculateData} from "../../Landing Page/LandingPage"
+import {useSnackbar } from 'notistack'
+ 
 
-
-const ExpenseTracker = ({chartData}) => {
-  const [balance,setBalance] = useState(4500);
-  const [expense,setExpense] = useState(500);
+  const ExpenseTracker = ({data,setData,chartData,setChartData}) => {
+  const localBalance = localStorage.getItem("balance")
+  const [balance,setBalance] = useState((localBalance===null)?4500:localBalance);
+  const [title,setTitle] = useState("");
+  const [price,setPrice] = useState(0);
+  const [category,setCategory] = useState("");
+  const [date,setDate] = useState("");
+  const [addbalance,setAddBalance] = useState(0);
+  const [expense,setExpense] = useState(0);
   const [openBalance, setOpenBalance] = useState(false);
   const [openExpense, setOpenExpense] = useState(false);
   const handleOpenBalance = () => setOpenBalance(true);
-  const handleCloseBalance = () => setOpenBalance(false);
+  const handleCloseBalance = () => {setOpenBalance(false);setAddBalance(0)};
   const handleOpenExpense = () => setOpenExpense(true);
   const handleCloseExpense = () => setOpenExpense(false);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+  
+  const handleBalance = ()=>{
+      setBalance((prev)=>parseInt(prev)+parseInt(addbalance));
+      localStorage.setItem("balance",parseInt(balance)+parseInt(addbalance));
+  }
+  const handleSubmit = ()=>{
+
+    if(price>balance){
+      enqueueSnackbar('You dont have sufficient balance');
+    }
+   else
+   {
+   const obj = {
+       "name":title,
+       "date": date,
+       "price":price,
+       "category":category,
+    }
+    const tempData = [...data,obj];
+    localStorage.setItem("data",JSON.stringify(tempData));
+    const chart = calculateData(tempData);
+    setData([...data,obj]);
+    setChartData(chart);
+    const tempExpense = parseInt(price)+parseInt(expense);
+    localStorage.setItem("expense",tempExpense);
+    setExpense(tempExpense);
+    setPrice(0);
+    setTitle("");
+    setCategory("");
+    setDate("");
+    handleCloseExpense();
+  }
+  }
+
+  useEffect(()=>{
+    const bal =  localStorage.getItem("balance");
+    if(bal!==null)
+     setBalance(bal);
+    const exp =  localStorage.getItem("expense");
+    if(exp!==null)
+      setExpense(exp);
+  },[])
+  
   return (
     <div>
     <h1 style={{fontSize:"32px",fontWeight:"700"}}>Expense Tracker</h1>
@@ -49,9 +101,9 @@ const ExpenseTracker = ({chartData}) => {
           <Box className={styles.modal}>
            <div className={styles.ubuntu} style={{marginBottom:"20px",marginLeft:"30px"}}>Add Balance</div>
            <div className={styles.container} style={{gap:"15px",justifyContent:"flex-end"}}> 
-            <input type="text" className={styles.input} placeholder="Income Amount"></input>
-            <button className={styles.shadowButton} style={{backgroundColor:"#F4BB4A"}}>Add Balance</button>
-            <button className={styles.shadowButton} style={{backgroundColor:"#E3E3E3",color:"black",fontWeight:"400",width:"110px"}}>Cancel</button>
+            <input type="text" className={styles.input} placeholder="Income Amount" onChange={(e)=>setAddBalance(e.target.value)}></input>
+            <button className={styles.shadowButton} style={{backgroundColor:"#F4BB4A"}} onClick={handleBalance}>Add Balance</button>
+            <button className={styles.shadowButton} style={{backgroundColor:"#E3E3E3",color:"black",fontWeight:"400",width:"110px"}} onClick={handleCloseBalance}>Cancel</button>
            </div>
           </Box>
         </Fade>
@@ -86,12 +138,12 @@ const ExpenseTracker = ({chartData}) => {
           <Box className={styles.modal}>
            <div className={styles.ubuntu} style={{marginBottom:"20px",marginLeft:"5px"}}>Add Expenses</div>
            <div className={styles.container} style={{gap:"20px",justifyContent:"flex-start"}}> 
-            <input type="text" className={styles.input} placeholder="Title"></input>
-            <input type="text" className={styles.input} placeholder="Price"></input>
-            <input type="" className={styles.input} placeholder="Select Category"></input>
-            <input type="text" className={styles.input} placeholder="dd/mm/yyyy"></input>
-            <button className={styles.shadowButton} style={{backgroundColor:"#F4BB4A",width:"220px"}}>Add Balance</button>
-            <button className={styles.shadowButton} style={{backgroundColor:"#E3E3E3",color:"black",fontWeight:"400",width:"110px"}}>Cancel</button>
+            <input type="text" className={styles.input} placeholder="Title" onChange={(e)=>{setTitle(e.target.value)}}></input>
+            <input type="text" className={styles.input} placeholder="Price" onChange={(e)=>{setPrice(e.target.value)}}></input>
+            <input type="text" className={styles.input} placeholder="Select Category" onChange={(e)=>{setCategory(e.target.value)}}></input>
+            <input type="text" className={styles.input} placeholder="dd/mm/yyyy" onChange={(e)=>{setDate(e.target.value)}}></input>
+            <button className={styles.shadowButton} style={{backgroundColor:"#F4BB4A",width:"220px"}} onClick={handleSubmit}>Add Balance</button>
+            <button className={styles.shadowButton} style={{backgroundColor:"#E3E3E3",color:"black",fontWeight:"400",width:"110px"}} onClick={handleCloseExpense}>Cancel</button>
            </div>
           </Box>
         </Fade>

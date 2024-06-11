@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 const COLORS = ['#FFBB28', '#FF8042' ,'#8F00FF'];
@@ -16,7 +17,6 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
 };
 
 const Chart = ({data})=> {
-  console.log('data is',data);
     return (
       <ResponsiveContainer width="100%" height="100%">
         <PieChart width={400} height={400}>

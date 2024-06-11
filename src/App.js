@@ -1,4 +1,5 @@
 import LandingPage from "./Landing Page/LandingPage";
+
 function App() {
   return (
     <div>

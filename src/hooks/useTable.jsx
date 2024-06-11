@@ -12,7 +12,6 @@ const calculateRange = (data,rowsPerPage)=>{
    }
 
     const sliceData = (data,page,rowsPerPage)=>{
-
        return data.slice((page-1)*rowsPerPage, page*rowsPerPage );
     }
 
@@ -27,7 +26,7 @@ const useTable = (data,page,rowsPerPage)=>{
     const slice = sliceData(data,page,rowsPerPage);
     setSlice([...slice]);
 
-    },[page]);
+    },[page,data]);
 
     return {slice, range : tableRange};
 
