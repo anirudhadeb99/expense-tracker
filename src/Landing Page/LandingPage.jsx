@@ -11,7 +11,8 @@ export const calculateData = (data) => {
 
   data.map((item) => {
     if (item.category === "food") food += parseInt(item.price);
-    else if (item.category === "entertainment") entertainment += parseInt(item.price);
+    else if (item.category === "entertainment")
+      entertainment += parseInt(item.price);
     else if (item.category === "travel") travel += parseInt(item.price);
   });
   return [
@@ -20,32 +21,51 @@ export const calculateData = (data) => {
     { name: "Food", value: food },
   ];
 };
-
 const LandingPage = () => {
-  const [data,setData] = useState([])
-  const [chartData,setChartData] = useState([]);
+  const [data, setData] = useState([]);
+  const [chartData, setChartData] = useState([]);
 
-
-  useEffect(()=> {
-    if(localStorage.getItem("data")!==null)
-      {
-        const parsedData = JSON.parse(localStorage.getItem("data"));
-        setData(parsedData);}
-    if(data.length>0)
-  {  const chart = calculateData(data);
-    setChartData(chart);
-  }
-  },[data])
+  useEffect(() => {
+    if (localStorage.getItem("data") === null) {
+      const tempData = [
+        {
+          name: "Samosa",
+          date: "11/06/2024",
+          price: 150,
+          category: "food",
+        },
+        {
+          name: "Movie",
+          date: "08/06/2024",
+          price: 300,
+          category: "entertainment",
+        },
+        { name: "Auto", date: "05/06/2024", price: 50, category: "travel" },
+      ];
+      localStorage.setItem("data",JSON.stringify(tempData));
+    }
+      const data = JSON.parse(localStorage.getItem("data"));
+      setData(data);
+      const chart = calculateData(data);
+      setChartData(chart);
+    
+  }, []);
 
   return (
     <div>
-    <div className={styles.container}>
-      <ExpenseTracker data={data} setData={setData} chartData={chartData} setChartData={setChartData} />
-      <div className={styles.wrapper}>
-      <Table data={data} />
-        <VerticalChart data={chartData}/>
+      <div className={styles.container}>
+        <ExpenseTracker
+          data={data}
+          setData={setData}
+          chartData={chartData}
+          setChartData={setChartData}
+        />
+        <div className={styles.wrapper}>
+          <Table data={data} setData={setData}
+          setChartData={setChartData}/>
+          <VerticalChart data={chartData} />
+        </div>
       </div>
-    </div>
     </div>
   );
 };

@@ -10,8 +10,7 @@ import {useSnackbar } from 'notistack'
  
 
   const ExpenseTracker = ({data,setData,chartData,setChartData}) => {
-  const localBalance = localStorage.getItem("balance")
-  const [balance,setBalance] = useState((localBalance===null)?4500:localBalance);
+  const [balance,setBalance] = useState(0);
   const [title,setTitle] = useState("");
   const [price,setPrice] = useState(0);
   const [category,setCategory] = useState("");
@@ -31,7 +30,8 @@ import {useSnackbar } from 'notistack'
       setBalance((prev)=>parseInt(prev)+parseInt(addbalance));
       localStorage.setItem("balance",parseInt(balance)+parseInt(addbalance));
   }
-  const handleSubmit = ()=>{
+  
+   const handleSubmit = ()=>{
 
     if(price>balance){
       enqueueSnackbar('You dont have sufficient balance');
@@ -50,8 +50,11 @@ import {useSnackbar } from 'notistack'
     setData([...data,obj]);
     setChartData(chart);
     const tempExpense = parseInt(price)+parseInt(expense);
+    const tempBalance = parseInt(balance)-parseInt(price);
     localStorage.setItem("expense",tempExpense);
+    localStorage.setItem("balance",tempBalance);
     setExpense(tempExpense);
+    setBalance(tempBalance);
     setPrice(0);
     setTitle("");
     setCategory("");
@@ -64,10 +67,22 @@ import {useSnackbar } from 'notistack'
     const bal =  localStorage.getItem("balance");
     if(bal!==null)
      setBalance(bal);
+    else
+    {
+    localStorage.setItem("balance",5000);
+    setBalance(bal);
+    }
+
     const exp =  localStorage.getItem("expense");
     if(exp!==null)
       setExpense(exp);
-  },[])
+    else
+   { localStorage.setItem("expense",500);
+   setExpense(exp);
+
+   }
+
+  },[data]);
   
   return (
     <div>
@@ -142,7 +157,7 @@ import {useSnackbar } from 'notistack'
             <input type="text" className={styles.input} placeholder="Price" onChange={(e)=>{setPrice(e.target.value)}}></input>
             <input type="text" className={styles.input} placeholder="Select Category" onChange={(e)=>{setCategory(e.target.value)}}></input>
             <input type="text" className={styles.input} placeholder="dd/mm/yyyy" onChange={(e)=>{setDate(e.target.value)}}></input>
-            <button className={styles.shadowButton} style={{backgroundColor:"#F4BB4A",width:"220px"}} onClick={handleSubmit}>Add Balance</button>
+            <button className={styles.shadowButton} style={{backgroundColor:"#F4BB4A",width:"220px"}} onClick={handleSubmit}>Add Expense</button>
             <button className={styles.shadowButton} style={{backgroundColor:"#E3E3E3",color:"black",fontWeight:"400",width:"110px"}} onClick={handleCloseExpense}>Cancel</button>
            </div>
           </Box>
